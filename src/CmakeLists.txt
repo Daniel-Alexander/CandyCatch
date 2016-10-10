@@ -1,0 +1,56 @@
+cmake_minimum_required(VERSION 2.8)
+
+MESSAGE(STATUS "................................Start................................") 
+
+project(CandyCatch)
+
+# Get our Paths
+Include(Paths.cmake)
+
+# Include OpenCV/irrKlang headers
+include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${IrrKlang_INCLUDE_DIRS})
+MESSAGE(STATUS "Setting OpenCV include dir to ${OpenCV_INCLUDE_DIRS}")
+MESSAGE(STATUS "Setting irrKlang include dir to ${IrrKlang_INCLUDE_DIRS}")
+
+# Include OpenCV/irrKlang libs
+link_directories(${OpenCV_LIBS})
+link_directories(${IrrKlang_LIBS})
+MESSAGE(STATUS "Setting OpenCV libary dir to ${OpenCV_LIBS}")
+MESSAGE(STATUS "Setting irrKlang libary dir to ${IrrKlang_LIBS}")
+
+# Give me the Binary dir
+MESSAGE(STATUS "Setting binary dir to ${CMAKE_BINARY_DIR}")
+
+# Get our headers and sources
+set(HEADERS face_detect_n_track/VideoFaceDetector.h StoreCandy.h)
+set(SOURCES face_detect_n_track/VideoFaceDetector.cpp StoreCandy.cpp main.cpp)
+
+# Add Programm
+add_executable(CandyCatch ${HEADERS} ${SOURCES})
+
+# Link OpenCV/irrKlang
+target_link_libraries(CandyCatch debug opencv_world310d optimized opencv_world310 ${EXTERNAL_LIBS})
+target_link_libraries(CandyCatch debug irrKlang optimized irrKlang ${EXTERNAL_LIBS})
+
+# Copy our binarys/dll
+if(WIN32)
+	file( COPY "${OpenCV_BINS}/opencv_world310d.dll" DESTINATION ${DEBUG_BINARY_DIR} NO_SOURCE_PERMISSIONS )
+	file( COPY "${OpenCV_BINS}/opencv_world310.dll" DESTINATION ${RELEASE_BINARY_DIR} NO_SOURCE_PERMISSIONS )
+	
+	file( COPY "${IrrKlang_BINS}/ikpFlac.dll" DESTINATION ${DEBUG_BINARY_DIR} NO_SOURCE_PERMISSIONS )
+	file( COPY "${IrrKlang_BINS}/ikpMP3.dll" DESTINATION ${DEBUG_BINARY_DIR} NO_SOURCE_PERMISSIONS )
+	file( COPY "${IrrKlang_BINS}/irrKlang.dll" DESTINATION ${DEBUG_BINARY_DIR} NO_SOURCE_PERMISSIONS )
+	file( COPY "${IrrKlang_BINS}/ikpFlac.dll" DESTINATION ${RELEASE_BINARY_DIR} NO_SOURCE_PERMISSIONS )
+	file( COPY "${IrrKlang_BINS}/ikpMP3.dll" DESTINATION ${RELEASE_BINARY_DIR} NO_SOURCE_PERMISSIONS )
+	file( COPY "${IrrKlang_BINS}/irrKlang.dll" DESTINATION ${RELEASE_BINARY_DIR} NO_SOURCE_PERMISSIONS )
+	
+else()
+	# TODO how to copy binarys for iOS???
+endif()
+
+# Copy the classifier file
+file( COPY "face_detect_n_track/haarcascade_frontalface_default.xml" DESTINATION ${DEBUG_BINARY_DIR} NO_SOURCE_PERMISSIONS )
+file( COPY "face_detect_n_track/haarcascade_frontalface_default.xml" DESTINATION ${RELEASE_BINARY_DIR} NO_SOURCE_PERMISSIONS )
+
+MESSAGE(STATUS "................................done................................") 
