@@ -1,0 +1,3 @@
+[submodule "src/face_detect_n_track"]
+	path = src/face_detect_n_track
+	url = https://github.com/mc-jesus/face_detect_n_track.git
